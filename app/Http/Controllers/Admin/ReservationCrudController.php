@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\ReservationRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 /**
  * Class ReservationCrudController
  * @package App\Http\Controllers\Admin
@@ -39,6 +39,7 @@ class ReservationCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        CRUD::addButtonFromModelFunction('top', 'export_button', 'export', 'end');
         CRUD::column([
             'name' => 'check_in_date',
             'label' => 'Check In Date',
@@ -218,5 +219,12 @@ class ReservationCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    public function export()
+    {
+        $reservations = \App\Models\Reservation::orderBy('id','desc')->get();   
+        $pdf = Pdf::loadView('export.reservation',['reservations' => $reservations]);
+        return $pdf->stream();
     }
 }

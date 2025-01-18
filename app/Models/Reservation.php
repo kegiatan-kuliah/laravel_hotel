@@ -23,5 +23,10 @@ class Reservation extends Model
     {
         return $this->belongsTo(Room::class, 'room_id');
     }
+
+    public function export($crud = false)
+    {
+        return '<a class="btn btn-primary" target="_blank" href="'.route('reservation.export').'">Download PDF</a>';
+    }
 }
 
